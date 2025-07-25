@@ -182,38 +182,79 @@ button:active {
 }
 
 /* === Zahlenmauer-Layout === */
+
+/* Pyramiden-Layout über Flex + CSS-Variablen */
 .pyramid {
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: flex-start; /* wir indentieren manuell */
   gap: 10px;
   margin: 20px 0;
 }
+.pyramid-grid {
+  margin: 0 auto;        /* zentriert den Grid/Flex-Container */
+}
+
+/* Jede Reihe erhält eine Breite von „cols“ bricks */
 .row {
   display: flex;
   gap: 10px;
+  /*
+     Indent = (levels – cols) × (Brick+Gap)/2.
+     Brick width = 60px, Gap = 10px ⇒ Summe = 70px ⇒ /2 = 35px
+  */
+  margin-left: calc((var(--levels) - var(--cols)) * 47px);
 }
+
 .brick {
   width: 60px;
   height: 60px;
   background: #fff8dc;
   border: 2px solid #ffcc5c;
   border-radius: 8px;
-  font-size: 1.2rem;
   text-align: center;
   line-height: 60px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  font-size: 1.8rem;    /* alle Zellen etwas größer */
 }
 .brick.input {
   background: #f0f9ff;
   border: 2px dashed #88d8b0;
+  width: 60px;
+  height: 60px;
+  text-align: center;
+  font-size: 1.8rem;
+}
+.brick.fixed {
+  width: 60px;
+  height: 60px;
+  background: #ffe27a;
+  text-align: center;
+  line-height: 60px;
+  margin: 0px 0px 15px;
+  padding: 10px;
+  font-size: 2.2rem;    /* extra groß für die festen Zellen */
+}
+/* Chrome, Safari, Edge, Opera */
+.brick.input::-webkit-outer-spin-button,
+.brick.input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+.brick.input[type="number"] {
+  -moz-appearance: textfield;
 }
 .brick.input:focus {
   outline: none;
   border-color: #ff6f69;
   box-shadow: 0 0 6px rgba(255,111,105,0.7);
 }
-
+.pyramid-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;   /* zentriert alles horizontal */
+}
 /* Farbliche Staffelung pro Ebene (optional) */
 .level-0 .brick { background: #ffe27a; }
 .level-1 .brick { background: #ffdaad; }
@@ -227,12 +268,51 @@ button:active {
   .pyramid { gap: 6px; }
   .row { gap: 6px; }
 }
-.pyramid {
-  display: grid;
-  grid-template-columns: repeat(var(--levels), 1fr);
-  justify-items: center;
-  gap: 10px;
+/* Progress Bar */
+.progress-container {
+  max-width: 450px;
+  margin: 10px auto;
 }
-.row {
-  display: contents; /* damit jede .brick direkt in das Grid einspringt */
+.progress-track {
+  position: relative;
+  width: 100%;
+  height: 20px;
+  background: #e0e0e0;
+  border-radius: 12px;
+  overflow: hidden;
+}
+#pyramid-progress {
+  width: 0;
+  height: 100%;
+  background: #88d8b0;
+  transition: width 0.3s ease;
+}
+#reward {
+  position: absolute;
+  right: 0;
+  top: -10px;
+  height: 40px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+#reward.visible {
+  opacity: 1;
+}
+
+/* Celebration Overlay */
+.celebration-overlay {
+  position: fixed; top:0; left:0;
+  width:100%; height:100%;
+  background:rgba(0,0,0,0.6);
+  display:flex; align-items:center;
+  justify-content:center; flex-direction:column;
+  z-index:9999;
+}
+.celebration-image { width:200px; margin-bottom:20px; }
+#new-game-btn {
+  padding:12px 25px;
+  font-size:1.2rem;
+  background:#ff6f69; color:#fff;
+  border:none; border-radius:10px;
+  cursor:pointer;
 }

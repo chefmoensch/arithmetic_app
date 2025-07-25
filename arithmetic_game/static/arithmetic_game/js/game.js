@@ -4,7 +4,6 @@ document.addEventListener('DOMContentLoaded', function () {
     const progressEl = document.getElementById('progress');
     const celebrationEl = document.getElementById('celebration-overlay');
 
-
     function updateProgress() {
         const pct = Math.min((correctCount / 10) * 100, 100);
         progressEl.style.width = pct + '%';

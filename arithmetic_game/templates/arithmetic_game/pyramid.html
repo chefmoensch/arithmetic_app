@@ -2,35 +2,50 @@
 {% load static %}
 
 {% block content %}
-    <div class="pyramid" style="--levels: {{ levels }};">
+
+    <!-- Progress Bar -->
+    <div class="progress-container">
+        <div class="progress-track">
+            <div id="pyramid-progress"></div>
+        </div>
+    </div>
+    <div class="pyramid-container">
         <h2>Zahlenmauer ({{ levels }} Ebenen)</h2>
-        <div class="pyramid">
-            {% for row in pyramid %}
-                {% for cell in row %}
-                    {% with r=forloop.parentloop.counter0 c=forloop.counter0 %}
-                        {% if forloop.parentloop and forloop.parentloop.counter0 != 0 %}
-                            <!-- Eingabefeld -->
-                            <input type="number"
-                                   class="brick input"
-                                   placeholder="?"
-                                   style="grid-row: {{ r|add:'1' }}; grid-column: {{ c|add:r|add:'1' }};"
-                                   data-row="{{ r }}"
-                                   data-col="{{ c }}"/>
-                        {% else %}
-                            <!-- Feste Zahl -->
-                            <div class="brick fixed"
-                                 style="grid-row: {{ r|add:'1' }}; grid-column: {{ c|add:r|add:'1' }};">
-                                {{ cell }}
-                            </div>
-                        {% endif %}
+
+        <!-- Nur EINE pyramid-Klasse -->
+        <form id="pyramid-form" method="post">
+            {% csrf_token %}
+            <div class="pyramid" style="--levels: {{ levels }};">
+                {% for row in pyramid %}
+                    {% with r=forloop.counter0 cols=row|length %}
+                        <!-- definiere cols als CSS-Variable -->
+                        <div class="row" style="--cols: {{ cols }};">
+                            {% for cell in row %}
+                                {% if r == 0 or r == levels|add:'-1' %}
+                                    <div class="brick fixed">{{ cell }}</div>
+                                {% else %}
+                                    <input type="number"
+                                           class="brick input"
+                                           name="user-{{ r }}-{{ c }}"
+                                           placeholder="?"
+                                           data-row="{{ r }}"
+                                           data-col="{{ c }}"/>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
                     {% endwith %}
                 {% endfor %}
-            {% endfor %}
-        </div>
-
-        <button id="check-pyramid">Prüfen</button>
+            </div>
+            <button type="submit" id="check-pyramid">Prüfen</button>
+            <button type="button" id="next-pyramid" style="display:none;">Nächste Aufgabe</button>
+        </form>
         <div id="pyramid-result"></div>
     </div>
-
+    <div id="celebration-overlay" class="celebration-overlay" style="display:none;">
+        <img src="{% static 'images/gummy_bear.png' %}"
+             alt="Gummibärchen"
+             class="celebration-image"/>
+        <button id="new-game-btn" onclick="window.location.href='/'">Neues Spiel</button>
+    </div>
     <script src="{% static 'arithmetic_game/js/pyramid.js' %}"></script>
 {% endblock %}
