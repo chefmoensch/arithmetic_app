@@ -1,0 +1,41 @@
+{# arithmetic_game/templates/arithmetic_game/pyramid_settings.html #}
+{% extends 'arithmetic_game/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="settings">
+  <h2>Zahlenmauern-Einstellungen</h2>
+  <form action="{% url 'arithmetic_game:pyramid_game' %}" method="post">
+    {% csrf_token %}
+    <label for="levels">
+      Anzahl der Ebenen: 
+      <span id="level-value">3</span>
+    </label>
+    <input 
+      type="range" 
+      id="levels" 
+      name="levels" 
+      min="2" 
+      max="5" 
+      value="3"
+      oninput="document.getElementById('level-value').textContent = this.value"
+    />
+
+    <button type="submit">Los geht’s!</button>
+  </form>
+</div>
+
+<script>
+  // Fallback für den Fall, dass JS deaktiviert ist
+  document.addEventListener('DOMContentLoaded', function() {
+    var slider = document.getElementById('levels');
+    var output = document.getElementById('level-value');
+    if (slider && output) {
+      output.textContent = slider.value;
+      slider.addEventListener('input', function() {
+        output.textContent = this.value;
+      });
+    }
+  });
+</script>
+{% endblock %}
