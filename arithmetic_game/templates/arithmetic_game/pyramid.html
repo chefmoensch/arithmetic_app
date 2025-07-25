@@ -1,10 +1,36 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends 'arithmetic_game/base.html' %}
+{% load static %}
 
-</body>
-</html>
+{% block content %}
+    <div class="pyramid" style="--levels: {{ levels }};">
+        <h2>Zahlenmauer ({{ levels }} Ebenen)</h2>
+        <div class="pyramid">
+            {% for row in pyramid %}
+                {% for cell in row %}
+                    {% with r=forloop.parentloop.counter0 c=forloop.counter0 %}
+                        {% if forloop.parentloop and forloop.parentloop.counter0 != 0 %}
+                            <!-- Eingabefeld -->
+                            <input type="number"
+                                   class="brick input"
+                                   placeholder="?"
+                                   style="grid-row: {{ r|add:'1' }}; grid-column: {{ c|add:r|add:'1' }};"
+                                   data-row="{{ r }}"
+                                   data-col="{{ c }}"/>
+                        {% else %}
+                            <!-- Feste Zahl -->
+                            <div class="brick fixed"
+                                 style="grid-row: {{ r|add:'1' }}; grid-column: {{ c|add:r|add:'1' }};">
+                                {{ cell }}
+                            </div>
+                        {% endif %}
+                    {% endwith %}
+                {% endfor %}
+            {% endfor %}
+        </div>
+
+        <button id="check-pyramid">Prüfen</button>
+        <div id="pyramid-result"></div>
+    </div>
+
+    <script src="{% static 'arithmetic_game/js/pyramid.js' %}"></script>
+{% endblock %}

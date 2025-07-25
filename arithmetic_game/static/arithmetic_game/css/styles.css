@@ -180,3 +180,59 @@ button:active {
   border-radius: 10px;
   cursor: pointer;
 }
+
+/* === Zahlenmauer-Layout === */
+.pyramid {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  margin: 20px 0;
+}
+.row {
+  display: flex;
+  gap: 10px;
+}
+.brick {
+  width: 60px;
+  height: 60px;
+  background: #fff8dc;
+  border: 2px solid #ffcc5c;
+  border-radius: 8px;
+  font-size: 1.2rem;
+  text-align: center;
+  line-height: 60px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+.brick.input {
+  background: #f0f9ff;
+  border: 2px dashed #88d8b0;
+}
+.brick.input:focus {
+  outline: none;
+  border-color: #ff6f69;
+  box-shadow: 0 0 6px rgba(255,111,105,0.7);
+}
+
+/* Farbliche Staffelung pro Ebene (optional) */
+.level-0 .brick { background: #ffe27a; }
+.level-1 .brick { background: #ffdaad; }
+.level-2 .brick { background: #cdeac0; }
+.level-3 .brick { background: #add8e6; }
+.level-4 .brick { background: #f9c0c0; }
+
+/* Responsive Anpassung */
+@media (max-width: 600px) {
+  .brick { width: 45px; height: 45px; line-height: 45px; font-size: 1rem; }
+  .pyramid { gap: 6px; }
+  .row { gap: 6px; }
+}
+.pyramid {
+  display: grid;
+  grid-template-columns: repeat(var(--levels), 1fr);
+  justify-items: center;
+  gap: 10px;
+}
+.row {
+  display: contents; /* damit jede .brick direkt in das Grid einspringt */
+}
