@@ -1,0 +1,29 @@
+{% extends 'arithmetic_game/base.html' %}
+{% block content %}
+    <div class="settings">
+        <form id="settings-form" action="{% url 'arithmetic_game:game' %}" method="post">
+            {% csrf_token %}
+            <label for="operation">Rechenart:</label>
+            <select name="operation" id="operation">
+                <option value="1">Addition</option>
+                <option value="2">Subtraktion</option>
+                <option value="3">Multiplikation</option>
+                <option value="4">Division</option>
+            </select>
+            <label for="range">Zahlenraum:</label>
+            <select name="range" id="range">
+                <option value="1">0 bis 10</option>
+                <option value="2" >0 bis 40</option>
+                <option value="3">0 bis 100</option>
+                <option value="4">0 bis 1000</option>
+            </select>
+            <button type="submit">Los geht's!</button>
+        </form>
+        <script>
+            document.getElementById('settings-form').addEventListener('submit', function () {
+                // Zähler löschen, dann startet die Progress-Bar bei 0
+                localStorage.removeItem('correctCount');
+            });
+        </script>
+    </div>
+{% endblock %}

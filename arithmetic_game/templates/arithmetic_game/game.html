@@ -1,0 +1,42 @@
+{# arithmetic_game/templates/arithmetic_game/game.html #}
+{% extends 'arithmetic_game/base.html' %}
+{% load static %}
+{% block content %}
+    <div class="game-container" data-answer="{{ answer }}">
+
+        <!-- 1. Fortschrittsleiste -->
+        <div class="progress-container">
+            <div class="progress-track">
+                <div id="progress"></div>
+            </div>
+        </div>
+
+        <!-- Rechenaufgabe -->
+        <div class="question">Aufgabe: <strong>{{ question }}</strong></div>
+
+        <!-- Eingabe-& Prüfform -->
+        <form id="answer-form">
+            <input type="number" step="0.01" id="answer-input" placeholder="Deine Antwort">
+            <button type="submit" id="check-btn">Prüfen</button>
+        </form>
+
+        <!-- Ergebnisanzeige -->
+        <div id="result"></div>
+
+        <!-- Nächste-Aufgabe-Button & verstecktes Formular -->
+        <button id="next-btn" style="display:none;">Nächste Aufgabe</button>
+        <form id="next-form" action="{% url 'arithmetic_game:game' %}" method="post" style="display:none;">
+            {% csrf_token %}
+            <input type="hidden" name="operation" value="{{ request.POST.operation }}">
+            <input type="hidden" name="range" value="{{ request.POST.range }}">
+        </form>
+    </div>
+
+    <!-- Celebration Overlay -->
+    <div id="celebration-overlay" class="celebration-overlay" style="display:none;">
+        <img src="{% static 'images/gummy_bear.png' %}"
+             alt="Gummibärchen"
+             class="celebration-image"/>
+        <button id="new-game-btn" onclick="window.location.href='/'">Neues Spiel</button>
+    </div>
+{% endblock %}
