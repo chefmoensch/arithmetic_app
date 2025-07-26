@@ -1,11 +1,29 @@
 {% extends 'arithmetic_game/base.html' %}
 {% load static %}
+
 {% block content %}
 <div class="settings">
-  <h2>Willkommen! Wähle einen Spielmodus:</h2>
-  <form action="{% url 'arithmetic_game:settings' %}" method="get">
-    <button type="submit" name="mode" value="math">Kopfrechenspiel</button>
-    <button type="submit" name="mode" value="pyramid">Zahlenmauern</button>
+  <h2>Einstellungen fürs Kopfrechenspiel</h2>
+  <form action="{% url 'arithmetic_game:game' %}" method="post">
+    {% csrf_token %}
+
+    <label for="operation">Operation:</label>
+    <select name="operation" id="operation">
+      <option value="1">Addition</option>
+      <option value="2">Subtraktion</option>
+      <option value="3">Multiplikation</option>
+      <option value="4">Division</option>
+    </select>
+
+    <label for="range">Zahlenraum:</label>
+    <select name="range" id="range">
+      <option value="1">0–10</option>
+      <option value="2">0–30</option>
+      <option value="3">0–100</option>
+      <option value="4">−100–100</option>
+    </select>
+
+    <button type="submit">Los geht’s!</button>
   </form>
 </div>
 {% endblock %}
