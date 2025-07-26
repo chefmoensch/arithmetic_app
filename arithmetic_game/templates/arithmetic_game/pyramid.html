@@ -21,16 +21,20 @@
                         <!-- definiere cols als CSS-Variable -->
                         <div class="row" style="--cols: {{ cols }};">
                             {% for cell in row %}
-                                {% if r == 0 or r == levels|add:'-1' %}
+                            {% with c=forloop.counter0 %}
+                                {% if r == levels|add:'-1' %}
                                     <div class="brick fixed">{{ cell }}</div>
                                 {% else %}
-                                    <input type="number"
-                                           class="brick input"
-                                           name="user-{{ r }}-{{ c }}"
-                                           placeholder="?"
-                                           data-row="{{ r }}"
-                                           data-col="{{ c }}"/>
+                                    <input
+                                            type="number"
+                                            class="brick input"
+                                            name="user-{{ r }}-{{ c }}"
+                                            data-row="{{ r }}"
+                                            data-col="{{ c }}"
+                                            placeholder="?"
+                                    />
                                 {% endif %}
+                            {% endwith %}
                             {% endfor %}
                         </div>
                     {% endwith %}
@@ -41,6 +45,11 @@
         </form>
         <div id="pyramid-result"></div>
     </div>
+    <form id="next-pyramid-form" action="{% url 'arithmetic_game:pyramid_game' %}" method="post" style="display:none;">
+        {% csrf_token %}
+        <!-- Hier muss stehen: -->
+        <input type="hidden" name="levels" value="{{ levels }}">
+    </form>
     <div id="celebration-overlay" class="celebration-overlay" style="display:none;">
         <img src="{% static 'images/gummy_bear.png' %}"
              alt="Gummibärchen"

@@ -1,8 +1,6 @@
-# File: `arithmetic_game/views.py`
 from django.shortcuts import render, redirect
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-import json
 from .utils import generate_question
 import random
 
@@ -77,15 +75,29 @@ def validate_pyramid(request):
     if not pyramid:
         return JsonResponse({'error': 'No pyramid in session'}, status=400)
 
-    # Alle Zellen außer oberster und unterster Ebene prüfen
+    # Alle Zellen außer unterster Ebene prüfen
     results = []
-    correct, total = is_valid_pyramid(pyramid)
-
+    correct = 0
+    total = 0
+    # Validate all rows except the bottom row index len(pyramid)-1
+    for r in range(0, len(pyramid) - 1):
+        for c in range(len(pyramid[r])):
+            total += 1
+            key = f'user-{r}-{c}'
+            try:
+                user_val = int(request.POST.get(key))
+            except (TypeError, ValueError):
+                user_val = None
+            is_correct = (user_val == pyramid[r][c])
+            if is_correct:
+                correct += 1
+            results.append({'row': r, 'col': c, 'correct': is_correct})
     return JsonResponse({
-        'correct': correct,
-        'total': total,
-        'results': results,
+    'correct': correct,
+    'total': total,
+    'results': results,
     })
+
 
 def is_valid_pyramid(pyramid):
     """

@@ -1,12 +1,29 @@
-document.addEventListener('DOMContentLoaded', (function(e) {
+document.addEventListener('DOMContentLoaded', (function (e) {
     const form = document.getElementById('pyramid-form');
     const resultEl = document.getElementById('pyramid-result');
     const progressEl = document.getElementById('pyramid-progress');
     if (!progressEl) return;
     const celebrationEl = document.getElementById('celebration-overlay');
-    const newGameBtn = document.getElementById('new-game-btn');
+    const nextPyramidBtn = document.getElementById('next-pyramid');
+    const nextForm = document.getElementById('next-pyramid-form');
 
-    let correctCount = 0;
+    // Setup reset listener on the modal's "Neues Spiel" button
+    const newGameBtn = document.getElementById('new-game-btn');
+    if (newGameBtn) {
+        newGameBtn.addEventListener('click', function () {
+            // Reset progress and hide overlay
+            localStorage.removeItem('correctCount');
+            updatePyramidProgress();
+            celebrationEl.style.display = 'none';
+            // Re-enable Prüfen & hide Next button
+            const checkBtn = document.getElementById('check-pyramid');
+            if (checkBtn) checkBtn.style.display = 'inline-block';
+            nextPyramidBtn.style.display = 'none';
+        });
+    }
+
+    // Initialize correctCount from localStorage, default to 0
+    let correctCount = parseInt(localStorage.getItem('correctCount')) || 0;
 
     function updatePyramidProgress() {
         const pct = Math.min((correctCount / 10) * 100, 100);
@@ -14,14 +31,6 @@ document.addEventListener('DOMContentLoaded', (function(e) {
         if (correctCount >= 10) {
             // show celebration overlay in modal
             celebrationEl.style.display = 'block';
-
-            // if "Neues Spiel" button is clicked, reset the game
-            celebrationEl.querySelector('.new-game-btn').addEventListener('click', function () {
-                correctCount = 0;
-                localStorage.setItem('correctCount', correctCount);
-                updateProgress();
-                celebrationEl.style.display = 'none';
-            });
         }
     }
 
@@ -30,6 +39,7 @@ document.addEventListener('DOMContentLoaded', (function(e) {
     form.addEventListener('submit', e => {
         e.preventDefault();
         const data = new FormData(form);
+        console.log(data);
         fetch('/pyramid/validate/', {
             method: 'POST',
             headers: {'X-CSRFToken': data.get('csrfmiddlewaretoken')},
@@ -43,8 +53,18 @@ document.addEventListener('DOMContentLoaded', (function(e) {
                 }
                 // Highlight each input
                 json.results.forEach(cell => {
-                    const selector = `input[data-row="${cell.row}"][data-col="${cell.col}"]`;
-                    const inp = document.querySelector(selector);
+                    // Versuche Data-Attribute, sonst greife auf name-Attribut zurück
+                    let selector = `input[data-row="${cell.row}"][data-col="${cell.col}"]`;
+                    let inp = document.querySelector(selector);
+                    console.log('Checking cell', cell, 'selector was', selector);
+                    if (!inp) {
+                        selector = `input[name="user-${cell.row}-${cell.col}"]`;
+                        inp = document.querySelector(selector);
+                    }
+                    if (!inp) {
+                        console.warn(`No input found for selector ${selector}`);
+                        return;
+                    }
                     inp.classList.toggle('wrong', !cell.correct);
                     inp.classList.toggle('correct', cell.correct);
                 });
@@ -60,12 +80,29 @@ document.addEventListener('DOMContentLoaded', (function(e) {
                     correctCount++;
                     localStorage.setItem('correctCount', correctCount);
                     updatePyramidProgress();
+
+                    // Show next task button and hide check button
+                    const checkBtn = document.getElementById('check-pyramid');
+                    const nextBtn = document.getElementById('next-pyramid');
+                    if (checkBtn && nextBtn) {
+                        checkBtn.style.display = 'none';
+                        nextBtn.style.display = 'inline-block';
+                    }
                 }
             });
     });
 
     // „Nächste Aufgabe“-Button: verstecktes Formular abschicken
-    next-pyramid.addEventListener('click', function () {
-        nextForm.submit();
+    nextPyramidBtn.addEventListener('click', function () {
+        // Show the Prüfen button again and hide the Next button
+        const checkBtn = document.getElementById('check-pyramid');
+        if (checkBtn) {
+            checkBtn.style.display = 'inline-block';
+        }
+        nextPyramidBtn.style.display = 'none';
+        // Submit the hidden form to generate a new puzzle
+        if (nextForm) {
+            nextForm.submit();
+        }
     });
 }));
