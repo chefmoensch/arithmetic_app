@@ -3,6 +3,7 @@ document.addEventListener('DOMContentLoaded', function () {
     let correctCount = parseInt(localStorage.getItem('correctCount')) || 0;
     const progressEl = document.getElementById('progress');
     const celebrationEl = document.getElementById('celebration-overlay');
+    const newGameBtn = document.getElementById('new-game-btn');
 
     function updateProgress() {
         const pct = Math.min((correctCount / 10) * 100, 100);
@@ -11,13 +12,15 @@ document.addEventListener('DOMContentLoaded', function () {
             // show celebration overlay in modal
             celebrationEl.style.display = 'block';
 
-            // if "Neues Spiel" button is clicked, reset the game
-            celebrationEl.querySelector('.new-game-btn').addEventListener('click', function () {
+            // Reset on New Game button click
+            if (newGameBtn) {
+              newGameBtn.addEventListener('click', function () {
                 correctCount = 0;
                 localStorage.setItem('correctCount', correctCount);
                 updateProgress();
                 celebrationEl.style.display = 'none';
-            });
+              });
+            }
         }
     }
 
@@ -55,10 +58,5 @@ document.addEventListener('DOMContentLoaded', function () {
     // „Nächste Aufgabe“-Button: verstecktes Formular abschicken
     nextBtn.addEventListener('click', function () {
         nextForm.submit();
-    });
-
-    newGameBtn.addEventListener('click', function () {
-        localStorage.removeItem('correctCount');
-        window.location.href = '/';
     });
 });
