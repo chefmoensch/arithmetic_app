@@ -68,10 +68,43 @@ document.addEventListener('DOMContentLoaded', (function (e) {
                     inp.classList.toggle('wrong', !cell.correct);
                     inp.classList.toggle('correct', cell.correct);
                 });
+
                 resultEl.textContent =
                     json.correct === json.total
                         ? 'Alles richtig! 🎉'
                         : `Richtig ${json.correct} von ${json.total}.`;
+                if (json.correct !== json.total) {
+                    // color all inputs red, which are not correct
+                    json.results.forEach(cell => {
+                        if (!cell.correct) {
+                            let selector = `input[data-row="${cell.row}"][data-col="${cell.col}"]`;
+                            let inp = document.querySelector(selector);
+                            if (!inp) {
+                                selector = `input[name="user-${cell.row}-${cell.col}"]`;
+                                inp = document.querySelector(selector);
+                            }
+                            if (inp) {
+                                inp.classList.add('wrong');
+                                // Highlight the input with a red background
+                                inp.style.backgroundColor = '#ffcccc'; // Light red background
+                            }
+                        } else {
+                            // color correct inputs with a green background
+                            let selector = `input[data-row="${cell.row}"][data-col="${cell.col}"]`;
+                            let inp = document.querySelector(selector);
+                            if (!inp) {
+                                selector = `input[name="user-${cell.row}-${cell.col}"]`;
+                                inp = document.querySelector(selector);
+                            }
+                            if (inp) {
+                                inp.classList.add('correct');
+                                // Highlight the input with a green background
+                                inp.style.backgroundColor = '#ccffcc'; // Light green background
+                            }
+                        }
+                    });
+                }
+
                 // confetti nur bei komplett richtig
                 if (json.correct === json.total) {
                     resultEl.textContent = 'Alles richtig! 🎉';
@@ -80,15 +113,15 @@ document.addEventListener('DOMContentLoaded', (function (e) {
                     correctCount++;
                     localStorage.setItem('correctCount', correctCount);
                     updatePyramidProgress();
-
-                    // Show next task button and hide check button
-                    const checkBtn = document.getElementById('check-pyramid');
-                    const nextBtn = document.getElementById('next-pyramid');
-                    if (checkBtn && nextBtn) {
-                        checkBtn.style.display = 'none';
-                        nextBtn.style.display = 'inline-block';
-                    }
                 }
+                // Show next task button and hide check button
+                const checkBtn = document.getElementById('check-pyramid');
+                const nextBtn = document.getElementById('next-pyramid');
+                if (checkBtn && nextBtn) {
+                    checkBtn.style.display = 'none';
+                    nextBtn.style.display = 'inline-block';
+                }
+
             });
     });
 
