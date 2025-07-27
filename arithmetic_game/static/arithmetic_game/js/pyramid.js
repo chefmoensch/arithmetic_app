@@ -84,7 +84,7 @@ document.addEventListener('DOMContentLoaded', (function (e) {
                                 inp = document.querySelector(selector);
                             }
                             if (inp) {
-                                inp.classList.add('wrong');
+                                // inp.classList.add('wrong');
                                 // Highlight the input with a red background
                                 inp.style.backgroundColor = '#ffcccc'; // Light red background
                             }
@@ -97,7 +97,7 @@ document.addEventListener('DOMContentLoaded', (function (e) {
                                 inp = document.querySelector(selector);
                             }
                             if (inp) {
-                                inp.classList.add('correct');
+                                // inp.classList.add('correct');
                                 // Highlight the input with a green background
                                 inp.style.backgroundColor = '#ccffcc'; // Light green background
                             }
@@ -113,13 +113,31 @@ document.addEventListener('DOMContentLoaded', (function (e) {
                     correctCount++;
                     localStorage.setItem('correctCount', correctCount);
                     updatePyramidProgress();
-                }
-                // Show next task button and hide check button
-                const checkBtn = document.getElementById('check-pyramid');
-                const nextBtn = document.getElementById('next-pyramid');
-                if (checkBtn && nextBtn) {
-                    checkBtn.style.display = 'none';
-                    nextBtn.style.display = 'inline-block';
+
+                    // all inputs are correct, so highlight the whole pyramid
+                    json.results.forEach(cell => {
+                        let selector = `input[data-row="${cell.row}"][data-col="${cell.col}"]`;
+                        let inp = document.querySelector(selector);
+                        if (!inp) {
+                            selector = `input[name="user-${cell.row}-${cell.col}"]`;
+                            inp = document.querySelector(selector);
+                        }
+                        if (inp) {
+                            // Highlight the input with a green background
+                            inp.style.backgroundColor = '#ccffcc'; // Light green background
+                            //add a shining effect on the input field
+                            inp.style.boxShadow = '0 0 10px #66bb6a'; // add a glowing effect
+                        }
+                    });
+
+                    // Show next task button and hide check button
+                    const checkBtn = document.getElementById('check-pyramid');
+                    const nextBtn = document.getElementById('next-pyramid');
+                    if (checkBtn && nextBtn) {
+                        checkBtn.style.display = 'none';
+                        nextBtn.style.display = 'inline-block';
+                    }
+
                 }
 
             });
